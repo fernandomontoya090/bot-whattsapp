@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estado del Bot WhatsApp</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        #status {
+            margin: 20px auto;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <h1>Estado del Bot WhatsApp</h1>
+    <div id="status">Estado: Desconectado</div>
+
+    <script>
+        async function obtenerEstado() {
+            const response = await fetch('/status');
+            const status = await response.text();
+            document.getElementById('status').innerText = `Estado: ${status}`;
+            document.getElementById('status').style.color = status === 'Conectado' ? 'green' : (status === 'Reconectando...' ? 'orange' : 'red');
+        }
+
+        obtenerEstado();
+        setInterval(obtenerEstado, 5000); // Actualizar el estado cada 5 segundos
+    </script>
+</body>
+</html>
