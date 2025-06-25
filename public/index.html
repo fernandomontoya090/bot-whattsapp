@@ -30,36 +30,38 @@
     <button onclick="cerrarSesion()">Cerrar Sesión</button>
 
     <script>
-        async function obtenerQR() {
-            const response = await fetch('/qr');
-            const qrCode = await response.text();
-            if (qrCode) {
-                document.getElementById('qr-image').src = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrCode)}&size=200x200`;
-                document.getElementById('status').innerText = 'Estado: Desconectado';
-                document.getElementById('status').style.color = 'red';
-            } else {
-                document.getElementById('status').innerText = 'Estado: Conectado';
-                document.getElementById('status').style.color = 'green';
-            }
-        }
+    const BACKEND_URL = 'https://bot-whattsapp.onrender.com';
 
-        async function obtenerEstado() {
-            const response = await fetch('/status');
-            const status = await response.text();
-            document.getElementById('status').innerText = `Estado: ${status}`;
-            document.getElementById('status').style.color = status === 'Conectado' ? 'green' : (status === 'Reconectando...' ? 'orange' : 'red');
+    async function obtenerQR() {
+        const response = await fetch(`${BACKEND_URL}/qr`);
+        const qrCode = await response.text();
+        if (qrCode) {
+            document.getElementById('qr-image').src = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrCode)}&size=200x200`;
+            document.getElementById('status').innerText = 'Estado: Desconectado';
+            document.getElementById('status').style.color = 'red';
+        } else {
+            document.getElementById('status').innerText = 'Estado: Conectado';
+            document.getElementById('status').style.color = 'green';
         }
+    }
 
-        async function cerrarSesion() {
-            await fetch('/logout');
-            alert('Sesión cerrada. Escanea el nuevo código QR.');
-            obtenerQR();
-        }
+    async function obtenerEstado() {
+        const response = await fetch(`${BACKEND_URL}/status`);
+        const status = await response.text();
+        document.getElementById('status').innerText = `Estado: ${status}`;
+        document.getElementById('status').style.color = status === 'Conectado' ? 'green' : (status === 'Reconectando...' ? 'orange' : 'red');
+    }
 
+    async function cerrarSesion() {
+        await fetch(`${BACKEND_URL}/logout`);
+        alert('Sesión cerrada. Escanea el nuevo código QR.');
         obtenerQR();
-        obtenerEstado();
-        setInterval(obtenerQR, 60000); // Actualizar el QR cada 60 segundos 
-        setInterval(obtenerQR, 5000); // Actualizar el estado cada 5 segundos
-    </script>
+    }
+
+    obtenerQR();
+    obtenerEstado();
+    setInterval(obtenerQR, 60000); // Actualizar el QR cada 60 segundos 
+    setInterval(obtenerEstado, 5000); // Actualizar el estado cada 5 segundos
+</script>
 </body>
 </html>
